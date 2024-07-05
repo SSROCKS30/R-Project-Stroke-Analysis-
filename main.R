@@ -50,30 +50,24 @@ confusionMatrix(as.factor(predicted_classes), strokeTest$stroke)
 
 # Visualization
 
-# Age distribution by stroke status
-ggplot(data, aes(x = age, fill = stroke)) + 
-  geom_histogram(binwidth = 5, position = "dodge") +
-  labs(title = "Age Distribution by Stroke Status", x = "Age", y = "Count")
+# Correlation matrix with scatter plots and correlation values
+plot_data <- data %>%
+  select(age, hypertension, heart_disease, avg_glucose_level, bmi)
 
-# Average glucose level by stroke status
-ggplot(data, aes(x = stroke, y = avg_glucose_level, fill = stroke)) + 
-  geom_boxplot() +
-  labs(title = "Average Glucose Level by Stroke Status", x = "Stroke", y = "Average Glucose Level")
+corr_matrix <- cor(plot_data)
+corrplot::corrplot(corr_matrix, method = "circle", type = "lower", tl.col = "black", tl.srt = 45)
 
-# BMI distribution by stroke status
-ggplot(data, aes(x = bmi, fill = stroke)) + 
-  geom_histogram(binwidth = 1, position = "dodge") +
-  labs(title = "BMI Distribution by Stroke Status", x = "BMI", y = "Count")
+# Contour plot of glucose and age with stroke
+ggplot(data, aes(x = age, y = avg_glucose_level, color = stroke)) + 
+  geom_point(alpha = 0.5) +
+  geom_density2d() +
+  labs(title = "Contour Plot of Glucose and Age with Stroke", x = "Age", y = "Average Glucose Level")
 
-# Hypertension by stroke status
-ggplot(data, aes(x = factor(hypertension), fill = stroke)) + 
-  geom_bar(position = "dodge") +
-  labs(title = "Hypertension by Stroke Status", x = "Hypertension", y = "Count")
-
-# Heart disease by stroke status
-ggplot(data, aes(x = factor(heart_disease), fill = stroke)) + 
-  geom_bar(position = "dodge") +
-  labs(title = "Heart Disease by Stroke Status", x = "Heart Disease", y = "Count")
+# Stacked bar plot of hypertension facetted by stroke
+ggplot(data, aes(x = factor(hypertension), fill = gender)) + 
+  geom_bar(position = "stack") +
+  facet_wrap(~stroke) +
+  labs(title = "Stacked Bar Plot of Hypertension Facetted by Stroke", x = "Hypertension", y = "Observed Counts")
 
 # Smoking status by stroke status
 ggplot(data, aes(x = smoking_status, fill = stroke)) + 
